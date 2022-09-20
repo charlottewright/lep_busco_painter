@@ -7,7 +7,10 @@ Paints chromosomes with BUSCOs.
 buscopainter.py takes the full_table.tsv output file for a "reference" species and a "query" species, along with an optional prefix (specified with -p, default "buscopainter"), e.g.:
 
 ```
+# Basic mode: just assign each BUSCO to a chr
 python3 buscopainter.py -r test_data/ilAglIoxx1_full_table.tsv -q test_data/ilApoTurb1_full_table.tsv
+# ..Also determine most common group of BUSCOs per chr
+python3 buscopainter_onlydiff.py -r test_data/ilAglIoxx1_full_table.tsv -q test_data/ilApoTurb1_full_table.tsv
 ```
 It will write two TSV files:
 
