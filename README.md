@@ -18,7 +18,7 @@ It will write two TSV files:
 - `[PREFIX]_location.tsv` which contains locations of all shared BUSCOs. This file can be plotted using plot_locations.R
 
 2. Plotting
-The [PREFIX]_location.tsv can be plotted as follows:
+The `[PREFIX]_location.tsv` can be plotted as follows:
 
 ```
 # Basic plotting - plot position of each BUSCO along each chr. Colour BUSCO by chr identity. Each chr is a box of fixed size
