@@ -1,5 +1,5 @@
-# buscopaint
-Paints chromosomes with BUSCOs.
+# Lep busco painter
+Paints chromosomes of lepidopteran genomes with BUSCOs.
 
 ### Installation
 
