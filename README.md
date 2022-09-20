@@ -1,6 +1,17 @@
 # buscopaint
 Paints chromosomes with BUSCOs.
 
+### Installation
+
+```
+conda env create -n buscopaint python=3.9 
+conda activate buscopaint
+conda install samtools 
+conda install -c conda-forge r-base
+conda install -c r r-tidyverse
+```
+
+
 ### Running the scripts
 
 1. Assign each BUSCO to a chromosome
