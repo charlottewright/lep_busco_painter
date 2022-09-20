@@ -18,15 +18,14 @@ conda install -c r r-tidyverse
 buscopainter.py takes the full_table.tsv output file for a "reference" species and a "query" species, along with an optional prefix (specified with -p, default "buscopainter"), e.g.:
 
 ```
-# Basic mode: just assign each BUSCO to a chr
+# Assign each BUSCO to a chr and state if it belongs to the dominant group of BUSCOs per chr ('self') or not
 python3 buscopainter.py -r test_data/ilAglIoxx1_full_table.tsv -q test_data/ilApoTurb1_full_table.tsv
-# ..Also determine most common group of BUSCOs per chr
-python3 buscopainter_onlydiff.py -r test_data/ilAglIoxx1_full_table.tsv -q test_data/ilApoTurb1_full_table.tsv
 ```
+
 It will write two TSV files:
 
 - `[PREFIX]_summary.tsv` which contains a summary of the chromosomal assignments
-- `[PREFIX]_location.tsv` which contains locations of all shared BUSCOs. This file can be plotted using plot_locations.R
+- `[PREFIX]_location.tsv` which contains the location and status of all shared BUSCOs. This file can be plotted using plot_locations.R
 
 2. Plotting
 The `[PREFIX]_location.tsv` can be plotted as follows:
