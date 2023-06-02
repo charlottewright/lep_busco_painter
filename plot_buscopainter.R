@@ -12,6 +12,7 @@ suppressMessages(library(scales))
 prepare_data <- function(args1){
   locations <- read_tsv(args1, col_types = cols())
   locations <- locations %>% filter(!grepl(':', query_chr)) # format location data 
+  locations <- locations %>% filter(!grepl(':', assigned_chr)) # format location data 
   locations <- locations %>% group_by(query_chr) %>% mutate(length = max(position)) %>% ungroup()
   locations$start <- 0
   return(locations)
@@ -22,6 +23,7 @@ prepare_data_with_index <- function(args1, args2){
   contig_lengths <- read_tsv(args2, col_names=FALSE, col_types = cols())
   colnames(contig_lengths) <- c('Seq', 'length', 'offset', 'linebases', 'linewidth')
   locations <- locations %>% filter(!grepl(':', query_chr)) # format location data 
+  locations <- locations %>% filter(!grepl(':', assigned_chr)) # format location data 
   locations <- merge(locations, contig_lengths, by.x="query_chr", by.y="Seq")
   locations$start <- 0
   return(locations)
@@ -166,10 +168,10 @@ option_list = list(
     make_option(c("-i", "--index"), type="character", default="False", 
         help="genome index file", metavar="character"),
     make_option(c("-m", "--merians"), type="character", default="False", 
-        help="use this flag if you are comparing species 1 to Merian elements", metavar="character"),
+        help="use this flag if you are comparing a genome to Merian elements", metavar="character"),
     make_option(c("-d", "--differences"), type="character", default="False",
-        help="only colour orthologs that have moved from the dominant chromosome", metavar="character"),
-    make_option(c("-n", "--minimum"), type="integer", default=5,
+        help="only colour buscos that have moved from the dominant chromosome", metavar="character"),
+    make_option(c("-n", "--minimum"), type="integer", default=3,
         help="minimum number of buscos ", metavar="number")
         );
  
@@ -186,7 +188,7 @@ minimum <- opt$minimum
 
 if (index == "False"){ # if no index supplied
     location_set <- prepare_data(locations)
-    locations_filt <- filter_buscos(location_set)
+    locations_filt <- filter_buscos(location_set, minimum)
 } else { # if index supplied
     location_set <- prepare_data_with_index(locations, index) 
     locations_filt <- filter_buscos(location_set, minimum)
