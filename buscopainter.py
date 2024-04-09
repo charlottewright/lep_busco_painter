@@ -48,7 +48,10 @@ def print_summary_table(reference_table_dict, reference_chr_list, query_table_di
 				reference_chr = reference_table_dict[buscoID][0]
 			except KeyError:
 				pass
-			assignment_dict[query_chr][reference_chr_list.index(reference_chr)] += 1
+			try:
+				assignment_dict[query_chr][reference_chr_list.index(reference_table_dict[buscoID][0])] += 1
+			except KeyError:
+				pass
 		for chr, count_list in assignment_dict.items():
 			top_chr, top_chr_count, total = '', 0, 0 
 			for reference_chr in reference_chr_list:
@@ -60,7 +63,10 @@ def print_summary_table(reference_table_dict, reference_chr_list, query_table_di
 						top_chr, top_chr_count = reference_chr, count
 				else:
 					top_chr, top_chr_count = reference_chr, count
-			perc = round((top_chr_count / total), 2)
+			if top_chr_count >= 1:
+				perc = round((top_chr_count / total), 2)
+			else:
+				perc = 0 # i.e. not a single chr in the ref has a gene in common with this query chr!	
 			summary_table.write("%s\t%s\t%s\t%s\t%s\t%s" % (chr, top_chr, top_chr_count, total, perc, '\t'.join(str(x) for x in count_list)) + "\n")
 			top_chr_dict[chr] = top_chr
 	return top_chr_dict
