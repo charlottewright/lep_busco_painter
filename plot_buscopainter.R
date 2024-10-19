@@ -59,6 +59,18 @@ busco_paint_theme <- theme(legend.position="right",
                            plot.title = element_text(hjust = 0.5, face="italic", size=20),
                            plot.subtitle = element_text(hjust = 0.5, size=20))
 
+busco_paint_no_facet_labels_theme <- theme(legend.position="right",
+                           strip.text.x = element_blank(), 
+                           panel.background = element_rect(fill = "white", colour = "white"), 
+                           panel.grid.major = element_blank(), 
+                           panel.grid.minor = element_blank(),
+                           axis.line.x = element_line(color="black", size = 0.5),
+                           axis.text.x = element_text(size=15),
+                           axis.title.x = element_text(size=15),
+                           strip.text.y = element_text(angle=0),
+                           strip.background = element_blank(),
+                           plot.title = element_text(hjust = 0.5, face="italic", size=20),
+                           plot.subtitle = element_text(hjust = 0.5, size=20))
 # plot only buscos that have moved - paint by Merians
 paint_merians_differences_only <- function(spp_df, subset_merians, num_col, title, karyotype){
   merian_order <- c('MZ', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20','M21', 'M22', 'M23', 'M24', 'M25', 'M26', 'M27', 'M28', 'M29', 'M30', 'M31', 'self')
@@ -71,13 +83,13 @@ paint_merians_differences_only <- function(spp_df, subset_merians, num_col, titl
     scale_colour_manual(values=subset_merians, aesthetics=c("colour", "fill")) +
     geom_rect(aes(xmin=start, xmax=length, ymax=0, ymin =12), colour="black", fill="white") + 
     geom_rect(aes(xmin=position-2e4, xmax=position+2e4, ymax=0, ymin =12, fill=status_f)) +
-    facet_wrap(query_chr_f ~., ncol=num_col, strip.position="right") + guides(scale="none") + 
+    facet_wrap(query_chr_f ~., ncol=num_col) + guides(scale="none") + 
     xlab("Position (Mb)") +
     scale_x_continuous(labels=function(x)x/1e6, expand=c(0.005,1)) +
     scale_y_continuous(breaks=NULL) + 
     ggtitle(label=title, subtitle= sub_title)  +
-    guides(fill=guide_legend("Merian element"), color = "none") +
-    busco_paint_theme
+    guides(fill=guide_legend("Merian element"), color = "none") 
+   # busco_paint_theme
   return(the_plot)
 }
 
@@ -87,9 +99,10 @@ paint_species_differences_only <- function(spp_df, num_col, title, karyotype){
   chr_levels <- subset(spp_df, select = c(query_chr, length)) %>% unique() %>% arrange(length, decreasing=TRUE)
   chr_levels <- chr_levels$query_chr
   chr_levels = chr_levels [! chr_levels %in% "self"]
-  spp_df$query_chr_f =factor(spp_df$query_chr, levels=chr_levels) # set chr order as order for plotting
-  legend_levels <- subset(spp_df, select = c(status)) %>% unique() 
-  legend_levels <- legend_levels$status
+  spp_df$query_chr_f =factor(spp_df$query_chr, levels=chr_levels) # set chr order as order for plotting query chr
+  legend_levels <- unique(spp_df$status)
+  legend_levels <- legend_levels[legend_levels != 'self'] # remove 'self' from list
+  legend_levels <- c('self',legend_levels) # then put 'self' back in to have it in first position as want 'self' to always be painted grey.
   num_colours <- length(legend_levels)
   col_palette <- hue_pal()(num_colours) 
   col_palette[1] <- 'grey'
@@ -206,7 +219,7 @@ if (merians != "False"){ # if Merian elements are being used as the comparator
     }
 
 # generate the plot - four possible options based on given arguments to script
-
+# plot only buscos that have moved - paint by Merians
 if (merians == "False"){ # if comparing two species
     if (differences_only == "False"){ # if colouring all orthologs
         p <- paint_species_all(locations_filt, 1, prefix, num_contigs)
@@ -218,9 +231,21 @@ if (merians == "False"){ # if comparing two species
     if (differences_only == "False"){ # if colouring all orthologs
         p <- paint_merians_all(locations_filt, 1, prefix, num_contigs)
     } else { # if only colouring orthologs that have moved
-        p <- paint_merians_differences_only(locations_filt, subset_merians, 1, prefix, num_contigs)
+    if (length(locations_filt$query_chr) < 100){
+      p <- paint_merians_differences_only(locations_filt, subset_merians, 1, prefix, num_contigs) 
+      p <- p + busco_paint_theme
+    } else {
+      p <- paint_merians_differences_only(locations_filt, subset_merians, 3, prefix, num_contigs) 
+      #p <- p + busco_paint_theme
+      p <- p + busco_paint_no_facet_labels_theme
+    }
     }    
 }
+
+
+ggsave(paste(as.character(opt$file), "_buscopainter.png", sep = ""), plot = p, width = 15, height = 30, units = "cm", device = "png")
+pdf(NULL)
+ggsave(paste(as.character(opt$file), "_buscopainter.pdf", sep = ""), plot = p, width = 15, height = 30, units = "cm", device = "pdf")
 
 
 ggsave(paste(as.character(opt$file), "_buscopainter.png", sep = ""), plot = p, width = 15, height = 30, units = "cm", device = "png")
