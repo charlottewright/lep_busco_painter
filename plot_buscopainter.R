@@ -40,7 +40,13 @@ filter_buscos <- function(locations, minimum){ # minimum of buscos to be present
 
 set_merian_colour_mapping <- function(location_set){ # Set mapping of Merian element to colour when only plot 
   merian_order = c('MZ', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20','M21', 'M22', 'M23', 'M24', 'M25', 'M26', 'M27', 'M28', 'M29', 'M30', 'M31', 'self')
-  colour_palette <- append(hue_pal()(32), 'grey')
+  #colour_palette <- append(hue_pal()(32), 'grey')
+  colour_palette <- [
+        “#710093", “#BC007B”, “#EA005B”, “#FC1D1D”, “#FD9514", “#E9CB19”,
+        “#87BF13", “#00AB3E”, “#00F2A1", “#005C66”, “#00589E”, “#006DDB”, “#0080FF”,
+        “#A676FF”, “#FF1AEF”, “#FF82CD”, “#FF6B70", “#EE6A15”, “#A16C00", “#4E6400”,
+        “#005200", “#00E251”, “#009286", “#00B0E0”, “#00C8FF”, “#A1D0FF”, “#ABA9E5",
+        “#AE83B6”, “#A56183", “#8E454F”, “#6B3122", "#666666”]
   status_merians <- unique(location_set$status)
   subset_merians <- subset(colour_palette, merian_order %in% status_merians)
   return(subset_merians)
